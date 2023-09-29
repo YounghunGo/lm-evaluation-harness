@@ -1,0 +1,8 @@
+[2023-09-14 09:24:57,970] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Selected Tasks: ['hellaswag']
+[2023-09-14 09:25:01,695] [INFO] [comm.py:637:init_distributed] cdb=None
+[2023-09-14 09:25:01,695] [INFO] [comm.py:652:init_distributed] Not using the DeepSpeed or dist launchers, attempting to detect MPI environment...
+[2023-09-14 09:25:01,826] [INFO] [comm.py:702:mpi_discovery] Discovered MPI settings of world_rank=0, local_rank=0, world_size=1, master_addr=10.63.0.2, master_port=29500
+[2023-09-14 09:25:01,826] [INFO] [comm.py:668:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+start timestamping
+is_deepspeed_zero3_enabled False

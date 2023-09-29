@@ -4,7 +4,7 @@ import logging
 import os
 
 from lm_eval import tasks, evaluator, utils
-
+import deepspeed
 logging.getLogger("openai").setLevel(logging.WARNING)
 
 
@@ -30,7 +30,12 @@ def parse_args():
     parser.add_argument("--check_integrity", action="store_true")
     parser.add_argument("--write_out", action="store_true", default=False)
     parser.add_argument("--output_base_path", type=str, default=None)
-
+    parser.add_argument("--local_rank", type=int, default=None)
+    #parser.add_argument("--deepspeed", type=str, default=None)
+    parser.add_argument(
+        "--ckpt_dir", type=str, required=False,
+        help="Location of LLama weights",
+    )
     return parser.parse_args()
 
 
@@ -56,6 +61,12 @@ def main():
         with open(args.description_dict_path, "r") as f:
             description_dict = json.load(f)
 
+    #deepspeed.init_distributed()
+    import time
+
+    start = time.time()
+    print("start timestamping")
+
     results = evaluator.simple_evaluate(
         model=args.model,
         model_args=args.model_args,
@@ -72,6 +83,9 @@ def main():
         write_out=args.write_out,
         output_base_path=args.output_base_path,
     )
+    end = time.time()
+
+    print(f"{end - start: .5f} sec")
 
     dumped = json.dumps(results, indent=2)
     print(dumped)

@@ -1,0 +1,39 @@
+/usr/local/lib/python3.9/site-packages/setuptools/distutils_patch.py:25: UserWarning: Distutils was imported before Setuptools. This usage is discouraged and may exhibit undesirable behaviors or errors. Please use Setuptools' objects directly or at least import Setuptools first.
+  warnings.warn(
+You are using the default legacy behaviour of the <class 'transformers.models.llama.tokenization_llama.LlamaTokenizer'>. If you see this, DO NOT PANIC! This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thouroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565
+Traceback (most recent call last):
+  File "/home/work/data_yhgo/lm-evaluation-harness/main.py", line 104, in <module>
+    main()
+  File "/home/work/data_yhgo/lm-evaluation-harness/main.py", line 67, in main
+    results = evaluator.simple_evaluate(
+  File "/home/work/data_yhgo/lm-evaluation-harness/lm_eval/utils.py", line 243, in _wrapper
+    return fn(*args, **kwargs)
+  File "/home/work/data_yhgo/lm-evaluation-harness/lm_eval/evaluator.py", line 78, in simple_evaluate
+    lm = lm_eval.models.get_model(model).create_from_arg_string(
+  File "/home/work/data_yhgo/lm-evaluation-harness/lm_eval/base.py", line 115, in create_from_arg_string
+    return cls(**args, **args2) # HuggingFaceAutoLM call
+  File "/home/work/data_yhgo/lm-evaluation-harness/lm_eval/models/huggingface.py", line 235, in __init__
+    self.model = self._create_auto_model(
+  File "/home/work/data_yhgo/lm-evaluation-harness/lm_eval/models/huggingface.py", line 320, in _create_auto_model
+    model = self.AUTO_MODEL_CLASS.from_pretrained( # 여기서 Loading checkpoint shards 걸리는 듯
+  File "/home/work/.local/lib/python3.9/site-packages/transformers/models/auto/auto_factory.py", line 563, in from_pretrained
+    return model_class.from_pretrained(
+  File "/home/work/.local/lib/python3.9/site-packages/transformers/modeling_utils.py", line 2954, in from_pretrained
+    model = cls(config, *model_args, **model_kwargs)
+  File "/home/work/.local/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 747, in __init__
+    self.model = LlamaModel(config)
+  File "/home/work/.local/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 577, in __init__
+    self.layers = nn.ModuleList([LlamaDecoderLayer(config) for _ in range(config.num_hidden_layers)])
+  File "/home/work/.local/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 577, in <listcomp>
+    self.layers = nn.ModuleList([LlamaDecoderLayer(config) for _ in range(config.num_hidden_layers)])
+  File "/home/work/.local/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 391, in __init__
+    self.self_attn = LlamaAttention(config=config)
+  File "/home/work/.local/lib/python3.9/site-packages/transformers/models/llama/modeling_llama.py", line 257, in __init__
+    self.k_proj = nn.Linear(self.hidden_size, self.num_key_value_heads * self.head_dim, bias=False)
+  File "/home/work/.local/lib/python3.9/site-packages/torch/nn/modules/linear.py", line 101, in __init__
+    self.reset_parameters()
+  File "/home/work/.local/lib/python3.9/site-packages/torch/nn/modules/linear.py", line 107, in reset_parameters
+    init.kaiming_uniform_(self.weight, a=math.sqrt(5))
+  File "/home/work/.local/lib/python3.9/site-packages/torch/nn/init.py", line 412, in kaiming_uniform_
+    return tensor.uniform_(-bound, bound)
+KeyboardInterrupt

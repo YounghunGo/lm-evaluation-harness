@@ -13,6 +13,10 @@ from transformers import BatchEncoding
 from lm_eval import utils
 from lm_eval.base import BaseLM
 
+#deepspeed
+import deepspeed
+import os
+
 TokenSequence = Union[List[int], torch.LongTensor, torch.Tensor, BatchEncoding]
 
 _DeviceMapping = NewType("DeviceMapping", Mapping[str, Union[int, str, torch.device]])
@@ -289,6 +293,8 @@ class HuggingFaceAutoLM(BaseLM):
         bnb_4bit_compute_dtype: Optional[Union[str, torch.dtype]] = None,
         bnb_4bit_use_double_quant: Optional[bool] = False,
     ) -> transformers.AutoModel:
+        local_rank = int(os.getenv('LOCAL_RANK', '0'))
+        world_size = int(os.getenv('WORLD_SIZE', '1'))
         """Returns a pre-trained pytorch model from a pre-trained model configuration."""
         if not quantized:
             if load_in_4bit:
@@ -303,11 +309,16 @@ class HuggingFaceAutoLM(BaseLM):
                         model_kwargs["bnb_4bit_compute_dtype"] = _get_dtype(bnb_4bit_compute_dtype)
                     if bnb_4bit_use_double_quant:
                         model_kwargs["bnb_4bit_use_double_quant"] = bnb_4bit_use_double_quant
-            model = self.AUTO_MODEL_CLASS.from_pretrained(
+            import time
+
+            start = time.time()
+            model = self.AUTO_MODEL_CLASS.from_pretrained( # 여기서 Loading checkpoint shards 걸리는 듯
                 pretrained,
                 revision=revision + ("/" + subfolder if subfolder is not None else ""),
                 low_cpu_mem_usage=low_cpu_mem_usage,
                 device_map=device_map,
+                #device_map=local_rank,
+                #device_map="balanced",
                 max_memory=max_memory,
                 offload_folder=offload_folder,
                 load_in_8bit=load_in_8bit,
@@ -315,6 +326,13 @@ class HuggingFaceAutoLM(BaseLM):
                 torch_dtype=torch_dtype,
                 **model_kwargs,
             )
+            # from transformers import LlamaForCausalLM, LlamaTokenizer # transformers.AutoModelForCausalLM
+            # model_name = 'decapoda-research/llama-30b-hf'
+            # tokenizer = LlamaTokenizer.from_pretrained(model_name)
+            # model = LlamaForCausalLM.from_pretrained(model_name, device_map=device_map, torch_dtype=torch_dtype, trust_remote_code=True)
+            end = time.time()
+            print(f"pretrained load time: {end - start: .5f} sec")
+
         else:
             from auto_gptq import AutoGPTQForCausalLM
             model = AutoGPTQForCausalLM.from_quantized(
@@ -327,7 +345,34 @@ class HuggingFaceAutoLM(BaseLM):
                 use_triton=gptq_use_triton,
                 warmup_triton=gptq_use_triton,
                 inject_fused_attention=inject_fused_attention,
-            )
+	        )
+        # from parallelformers import parallelize
+
+        # parallelize(model, num_gpus=4, fp16=True, verbose='detail')
+        #from llm_serving.model.wrapper import get_model
+
+        #model = get_model(model_name="llama-30b-hf", path="~/llama-30b-hf/")
+
+    #deepspeed - inseo
+        #print("model.device_map", model.device_map)
+
+        tp_config = deepspeed.inference.config.DeepSpeedTPConfig()
+        tp_config.tp_size = world_size
+
+        start = time.time()
+        model = deepspeed.init_inference(model,
+            tensor_parallel=tp_config,
+            dtype=torch.float16,
+            #mp_size=world_size,
+            #replace_with_kernel_inject=True)
+            replace_with_kernel_inject=False,
+            use_triton=True,
+            triton_autotune=True)
+        
+        end = time.time()
+        print(f"deepspeed load time: {end - start: .5f} sec")
+        print(model)
+
         return model
 
     def _create_auto_model_peft(
@@ -388,10 +433,12 @@ class HuggingFaceAutoLM(BaseLM):
 
     @property
     def eot_token(self) -> str:
+        print("def eot_token")
         return self.tokenizer.eos_token
 
     @property
     def eot_token_id(self) -> int:
+        print("def eot_token_id")
         return self.tokenizer.eos_token_id
 
     @property
@@ -433,6 +480,15 @@ class HuggingFaceAutoLM(BaseLM):
 
     def tok_encode(self, string: str) -> TokenSequence:
         # TODO: Merge `tok_encode_batch` here.
+        #print("def tok_encode")
+        #print("self.add_special_tokens", self.add_special_tokens) # false
+        #test = self.tokenizer.encode(string, add_special_tokens=self.add_special_tokens)
+        #print("self.tokenizer.encode()", test)
+        #return test
+        '''
+        self.tokenizer.encode() [6991, 29877, 29901, 319, 7774, 6150, 9612, 4863, 338, 4318, 411, 2305, 24706, 3241, 2820, 322,
+            , 7679, 1691, 1641, 10322, 29889, 7803, 1757, 8589, 10832, 1862, 310, 16126, 322, 10614, 411, 263, 304, 367, 7572, 29889]
+        '''
         return self.tokenizer.encode(string, add_special_tokens=self.add_special_tokens)
 
     def tok_encode_batch(self, strings: List[str]) -> TokenSequence:
@@ -540,7 +596,16 @@ class AutoCausalLM(HuggingFaceAutoLM):
     def _model_call(
         self, inputs: TokenSequence, labels: Optional[TokenSequence] = None
     ) -> TokenSequence:
-        return self.model(inputs)["logits"]
+        #print("def _model_call")
+        #print("self.model(inputs)['logits']", self.model(inputs)["logits"])
+        #print("self.model(inputs)['logits'].shape", self.model(inputs)["logits"].shape)
+        #print("type(self.model(inputs))", type(self.model(inputs)))
+        # self.model(inputs)['logits'].shape: torch.Size([1, 17, 32000])
+        '''
+        logits (`torch.FloatTensor` of shape `(batch_size, sequence_length, config.vocab_size)`):
+            Prediction scores of the language modeling head (scores for each vocabulary token before SoftMax).
+        '''
+        return self.model(inputs)["logits"] # llama call
 
     def _model_generate(
         self,
@@ -700,6 +765,7 @@ class AutoSeq2SeqLM(HuggingFaceAutoLM):
     def _model_call(
         self, inputs: TokenSequence, labels: Optional[TokenSequence] = None
     ) -> TokenSequence:
+        print("def _model_call2")
         return self.model(**inputs, labels=labels["input_ids"])
 
     def _model_generate(

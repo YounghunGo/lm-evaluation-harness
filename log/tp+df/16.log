@@ -1,0 +1,27 @@
+[2023-09-18 12:39:50,748] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 12:39:52,667] [WARNING] [runner.py:203:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2023-09-18 12:39:52,697] [INFO] [runner.py:570:main] cmd = /usr/bin/python -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMSwgMiwgM119 --master_addr=127.0.0.1 --master_port=29500 --enable_each_rank_log=None main.py --model hf-causal-experimental --model_args pretrained=/home/work/llama-30b-hf,use_accelerate=False --batch_size 16 --tasks hellaswag --no_cache --device cuda
+[2023-09-18 12:39:54,544] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 12:39:56,110] [INFO] [launch.py:138:main] 0 NCCL_VERSION=2.8.2
+[2023-09-18 12:39:56,110] [INFO] [launch.py:145:main] WORLD INFO DICT: {'localhost': [0, 1, 2, 3]}
+[2023-09-18 12:39:56,110] [INFO] [launch.py:151:main] nnodes=1, num_local_procs=4, node_rank=0
+[2023-09-18 12:39:56,110] [INFO] [launch.py:162:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1, 2, 3]})
+[2023-09-18 12:39:56,110] [INFO] [launch.py:163:main] dist_world_size=4
+[2023-09-18 12:39:56,111] [INFO] [launch.py:165:main] Setting CUDA_VISIBLE_DEVICES=0,1,2,3
+[2023-09-18 12:39:59,175] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 12:39:59,175] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 12:39:59,218] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 12:39:59,230] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Selected Tasks: ['hellaswag']
+start timestamping
+Selected Tasks: ['hellaswag']
+start timestamping
+Selected Tasks: ['hellaswag']
+start timestamping
+Selected Tasks: ['hellaswag']
+start timestamping
+[2023-09-18 12:43:02,391] [INFO] [launch.py:315:sigkill_handler] Killing subprocess 2365074
+[2023-09-18 12:43:05,846] [INFO] [launch.py:315:sigkill_handler] Killing subprocess 2365075
+[2023-09-18 12:43:06,259] [INFO] [launch.py:315:sigkill_handler] Killing subprocess 2365076
+[2023-09-18 12:43:06,315] [INFO] [launch.py:315:sigkill_handler] Killing subprocess 2365077
+[2023-09-18 12:43:06,368] [INFO] [launch.py:324:sigkill_handler] Main process received SIGINT, exiting

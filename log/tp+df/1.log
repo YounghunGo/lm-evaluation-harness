@@ -1,0 +1,3 @@
+[2023-09-18 09:08:24,783] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 09:08:26,376] [WARNING] [runner.py:203:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2023-09-18 09:08:26,406] [INFO] [runner.py:570:main] cmd = /usr/bin/python -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMSwgMiwgM119 --master_addr=127.0.0.1 --master_port=29500 --enable_each_rank_log=None main.py --model hf-causal-experimental --model_args pretrained=/home/work/llama-30b-hf,use_accelerate=False --batch_size 1 --tasks hellaswag --no_cache --device cuda

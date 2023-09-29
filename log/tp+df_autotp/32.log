@@ -1,0 +1,227 @@
+[2023-09-18 19:40:38,023] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 19:40:39,855] [WARNING] [runner.py:203:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2023-09-18 19:40:39,885] [INFO] [runner.py:570:main] cmd = /usr/bin/python -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMSwgMiwgM119 --master_addr=127.0.0.1 --master_port=29500 --enable_each_rank_log=None main.py --model hf-causal-experimental --model_args pretrained=/home/work/llama-30b-hf,use_accelerate=False --batch_size 32 --tasks hellaswag --no_cache --device cuda
+[2023-09-18 19:40:41,770] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 19:40:43,359] [INFO] [launch.py:138:main] 0 NCCL_VERSION=2.8.2
+[2023-09-18 19:40:43,360] [INFO] [launch.py:145:main] WORLD INFO DICT: {'localhost': [0, 1, 2, 3]}
+[2023-09-18 19:40:43,360] [INFO] [launch.py:151:main] nnodes=1, num_local_procs=4, node_rank=0
+[2023-09-18 19:40:43,360] [INFO] [launch.py:162:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1, 2, 3]})
+[2023-09-18 19:40:43,360] [INFO] [launch.py:163:main] dist_world_size=4
+[2023-09-18 19:40:43,360] [INFO] [launch.py:165:main] Setting CUDA_VISIBLE_DEVICES=0,1,2,3
+[2023-09-18 19:40:46,558] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 19:40:46,559] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 19:40:46,560] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-18 19:40:46,560] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Selected Tasks: ['hellaswag']Selected Tasks: ['hellaswag']
+Selected Tasks: ['hellaswag']
+Selected Tasks: ['hellaswag']start timestamping
+start timestamping
+
+
+start timestampingstart timestamping
+
+[2023-09-18 19:45:22,636] [INFO] [logging.py:96:log_dist] [Rank -1] DeepSpeed info: version=0.10.2, git-hash=unknown, git-branch=unknown
+[2023-09-18 19:45:22,639] [INFO] [logging.py:96:log_dist] [Rank -1] quantize_bits = 8 mlp_extra_grouping = False, quantize_groups = 1
+_create_model_parallel_group
+[2023-09-18 19:45:22,639] [INFO] [comm.py:637:init_distributed] cdb=None
+[2023-09-18 19:45:22,644] [INFO] [logging.py:96:log_dist] [Rank -1] DeepSpeed info: version=0.10.2, git-hash=unknown, git-branch=unknown
+[2023-09-18 19:45:22,645] [INFO] [logging.py:96:log_dist] [Rank -1] DeepSpeed info: version=0.10.2, git-hash=unknown, git-branch=unknown
+[2023-09-18 19:45:22,647] [INFO] [logging.py:96:log_dist] [Rank -1] quantize_bits = 8 mlp_extra_grouping = False, quantize_groups = 1
+_create_model_parallel_group
+[2023-09-18 19:45:22,648] [INFO] [comm.py:637:init_distributed] cdb=None
+[2023-09-18 19:45:22,648] [INFO] [logging.py:96:log_dist] [Rank -1] quantize_bits = 8 mlp_extra_grouping = False, quantize_groups = 1
+_create_model_parallel_group
+[2023-09-18 19:45:22,649] [INFO] [comm.py:637:init_distributed] cdb=None
+[2023-09-18 19:45:22,669] [INFO] [logging.py:96:log_dist] [Rank -1] DeepSpeed info: version=0.10.2, git-hash=unknown, git-branch=unknown
+[2023-09-18 19:45:22,671] [INFO] [logging.py:96:log_dist] [Rank -1] quantize_bits = 8 mlp_extra_grouping = False, quantize_groups = 1
+_create_model_parallel_group
+[2023-09-18 19:45:22,671] [INFO] [comm.py:637:init_distributed] cdb=None
+[2023-09-18 19:45:22,671] [INFO] [comm.py:668:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+local_rank 2
+local_rank 1
+local_rank 0
+local_rank 3
+AutoTP:  [(<class 'transformers.models.llama.modeling_llama.LlamaDecoderLayer'>, ['self_attn.o_proj', 'mlp.down_proj'])]
+AutoTP:  [(<class 'transformers.models.llama.modeling_llama.LlamaDecoderLayer'>, ['mlp.down_proj', 'self_attn.o_proj'])]
+AutoTP:  [(<class 'transformers.models.llama.modeling_llama.LlamaDecoderLayer'>, ['mlp.down_proj', 'self_attn.o_proj'])]
+AutoTP:  [(<class 'transformers.models.llama.modeling_llama.LlamaDecoderLayer'>, ['mlp.down_proj', 'self_attn.o_proj'])]
+Task: hellaswag; number of docs: 10042
+Task: hellaswag; document 0; context prompt (starting on next line):
+Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.
+(end of prompt on previous line)
+Requests: [Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' You can visit a lingerie shop and have them measure you to help you fit a bra to your size, or measure yourself before you shop for a new bra to ensure that you get a good fit. Use a flexible tape measure, like one found in a sewing kit.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' This is why it is important to keep your breasts under protection when in the shower and only wear bras that are larger than your breast size. If you are not wearing a bra, try wearing something that is a little bigger.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' For a girl, a bra with a support strap will be easier for her, because most women are unable to pull through bra straps and bras that are too small will not be able to support breasts from side-to-side. Many bras have even been created that cover the breast side, and can be sent to other women in the world to make them look bigger.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' Choose a color that is flattering to your breast type and specific event, in addition to those that make you uncomfortable. Look for sports bras made from natural material, such as spandex or lycra, as this is a more breathable bra.')[0]
+]
+Task: hellaswag; number of docs: 10042
+Task: hellaswag; document 0; context prompt (starting on next line):
+Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.
+(end of prompt on previous line)
+Requests: [Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' You can visit a lingerie shop and have them measure you to help you fit a bra to your size, or measure yourself before you shop for a new bra to ensure that you get a good fit. Use a flexible tape measure, like one found in a sewing kit.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' This is why it is important to keep your breasts under protection when in the shower and only wear bras that are larger than your breast size. If you are not wearing a bra, try wearing something that is a little bigger.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' For a girl, a bra with a support strap will be easier for her, because most women are unable to pull through bra straps and bras that are too small will not be able to support breasts from side-to-side. Many bras have even been created that cover the breast side, and can be sent to other women in the world to make them look bigger.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' Choose a color that is flattering to your breast type and specific event, in addition to those that make you uncomfortable. Look for sports bras made from natural material, such as spandex or lycra, as this is a more breathable bra.')[0]
+]
+Task: hellaswag; number of docs: 10042
+Task: hellaswag; document 0; context prompt (starting on next line):
+Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.
+(end of prompt on previous line)
+Requests: [Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' You can visit a lingerie shop and have them measure you to help you fit a bra to your size, or measure yourself before you shop for a new bra to ensure that you get a good fit. Use a flexible tape measure, like one found in a sewing kit.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' This is why it is important to keep your breasts under protection when in the shower and only wear bras that are larger than your breast size. If you are not wearing a bra, try wearing something that is a little bigger.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' For a girl, a bra with a support strap will be easier for her, because most women are unable to pull through bra straps and bras that are too small will not be able to support breasts from side-to-side. Many bras have even been created that cover the breast side, and can be sent to other women in the world to make them look bigger.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' Choose a color that is flattering to your breast type and specific event, in addition to those that make you uncomfortable. Look for sports bras made from natural material, such as spandex or lycra, as this is a more breathable bra.')[0]
+]
+Running loglikelihood requests
+def loglikelihood
+Running loglikelihood requests
+def loglikelihood
+Task: hellaswag; number of docs: 10042
+Task: hellaswag; document 0; context prompt (starting on next line):
+Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.
+(end of prompt on previous line)
+Requests: [Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' You can visit a lingerie shop and have them measure you to help you fit a bra to your size, or measure yourself before you shop for a new bra to ensure that you get a good fit. Use a flexible tape measure, like one found in a sewing kit.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' This is why it is important to keep your breasts under protection when in the shower and only wear bras that are larger than your breast size. If you are not wearing a bra, try wearing something that is a little bigger.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' For a girl, a bra with a support strap will be easier for her, because most women are unable to pull through bra straps and bras that are too small will not be able to support breasts from side-to-side. Many bras have even been created that cover the breast side, and can be sent to other women in the world to make them look bigger.')[0]
+, Req_loglikelihood('Personal Care and Style: How to increase breast size with a bra. Check your bra size. Wearing a bra that is too big will not make your breasts look larger. That is why it is important to wear the right size bra for you.', ' Choose a color that is flattering to your breast type and specific event, in addition to those that make you uncomfortable. Look for sports bras made from natural material, such as spandex or lycra, as this is a more breathable bra.')[0]
+]
+Running loglikelihood requests
+def loglikelihood
+Running loglikelihood requests
+def loglikelihood
+def _loglikelihood_tokens
+def _loglikelihood_tokens
+def _loglikelihood_tokens
+def _loglikelihood_tokens
+ 4087.88313 sec
+{
+  "results": {
+    "hellaswag": {
+      "acc": 0.6334395538737303,
+      "acc_stderr": 0.004808802114592843,
+      "acc_norm": 0.8263294164509062,
+      "acc_norm_stderr": 0.003780517519302484
+    }
+  },
+  "versions": {
+    "hellaswag": 0
+  },
+  "config": {
+    "model": "hf-causal-experimental",
+    "model_args": "pretrained=/home/work/llama-30b-hf,use_accelerate=False",
+    "num_fewshot": 0,
+    "batch_size": "32",
+    "batch_sizes": [],
+    "device": "cuda",
+    "no_cache": true,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}
+hf-causal-experimental (pretrained=/home/work/llama-30b-hf,use_accelerate=False), limit: None, provide_description: False, num_fewshot: 0, batch_size: 32
+ 4087.89365 sec
+{
+  "results": {
+    "hellaswag": {
+      "acc": 0.6334395538737303,
+      "acc_stderr": 0.004808802114592843,
+      "acc_norm": 0.8263294164509062,
+      "acc_norm_stderr": 0.003780517519302484
+    }
+  },
+  "versions": {
+    "hellaswag": 0
+  },
+  "config": {
+    "model": "hf-causal-experimental",
+    "model_args": "pretrained=/home/work/llama-30b-hf,use_accelerate=False",
+    "num_fewshot": 0,
+    "batch_size": "32",
+    "batch_sizes": [],
+    "device": "cuda",
+    "no_cache": true,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}
+hf-causal-experimental (pretrained=/home/work/llama-30b-hf,use_accelerate=False), limit: None, provide_description: False, num_fewshot: 0, batch_size: 32
+ 4087.97402 sec
+{
+  "results": {
+    "hellaswag": {
+      "acc": 0.6334395538737303,
+      "acc_stderr": 0.004808802114592843,
+      "acc_norm": 0.8263294164509062,
+      "acc_norm_stderr": 0.003780517519302484
+    }
+  },
+  "versions": {
+    "hellaswag": 0
+  },
+  "config": {
+    "model": "hf-causal-experimental",
+    "model_args": "pretrained=/home/work/llama-30b-hf,use_accelerate=False",
+    "num_fewshot": 0,
+    "batch_size": "32",
+    "batch_sizes": [],
+    "device": "cuda",
+    "no_cache": true,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}
+hf-causal-experimental (pretrained=/home/work/llama-30b-hf,use_accelerate=False), limit: None, provide_description: False, num_fewshot: 0, batch_size: 32
+|  Task   |Version| Metric |Value |   |Stderr|
+|---------|------:|--------|-----:|---|-----:|
+|hellaswag|      0|acc     |0.6334|±  |0.0048|
+|         |       |acc_norm|0.8263|±  |0.0038|
+
+ 4088.01622 sec
+{
+  "results": {
+    "hellaswag": {
+      "acc": 0.6334395538737303,
+      "acc_stderr": 0.004808802114592843,
+      "acc_norm": 0.8263294164509062,
+      "acc_norm_stderr": 0.003780517519302484
+    }
+  },
+  "versions": {
+    "hellaswag": 0
+  },
+  "config": {
+    "model": "hf-causal-experimental",
+    "model_args": "pretrained=/home/work/llama-30b-hf,use_accelerate=False",
+    "num_fewshot": 0,
+    "batch_size": "32",
+    "batch_sizes": [],
+    "device": "cuda",
+    "no_cache": true,
+    "limit": null,
+    "bootstrap_iters": 100000,
+    "description_dict": {}
+  }
+}
+hf-causal-experimental (pretrained=/home/work/llama-30b-hf,use_accelerate=False), limit: None, provide_description: False, num_fewshot: 0, batch_size: 32
+|  Task   |Version| Metric |Value |   |Stderr|
+|---------|------:|--------|-----:|---|-----:|
+|hellaswag|      0|acc     |0.6334|±  |0.0048|
+|         |       |acc_norm|0.8263|±  |0.0038|
+
+|  Task   |Version| Metric |Value |   |Stderr|
+|---------|------:|--------|-----:|---|-----:|
+|hellaswag|      0|acc     |0.6334|±  |0.0048|
+|         |       |acc_norm|0.8263|±  |0.0038|
+
+|  Task   |Version| Metric |Value |   |Stderr|
+|---------|------:|--------|-----:|---|-----:|
+|hellaswag|      0|acc     |0.6334|±  |0.0048|
+|         |       |acc_norm|0.8263|±  |0.0038|
+
+[2023-09-18 20:49:00,823] [INFO] [launch.py:347:main] Process 2500009 exits successfully.
+[2023-09-18 20:49:01,833] [INFO] [launch.py:347:main] Process 2500012 exits successfully.
+[2023-09-18 20:49:01,834] [INFO] [launch.py:347:main] Process 2500010 exits successfully.
+[2023-09-18 20:49:01,834] [INFO] [launch.py:347:main] Process 2500011 exits successfully.

@@ -70,7 +70,9 @@ def simple_evaluate(
 
     assert tasks != [], "No tasks specified"
 
-    if isinstance(model, str):
+    if isinstance(model, str): # 여기
+        #print("model", model) # hf-causal-experimental
+        #print("model_args", model_args) # pretrained=/home/work/llama-30b-hf,use_accelerate=True
         if model_args is None:
             model_args = ""
         lm = lm_eval.models.get_model(model).create_from_arg_string(
@@ -96,7 +98,7 @@ def simple_evaluate(
             + model_args.replace("=", "-").replace(",", "_").replace("/", "-")
             + ".db",
         )
-
+    
     task_dict = lm_eval.tasks.get_task_dict(tasks)
 
     if check_integrity:
@@ -134,7 +136,7 @@ def simple_evaluate(
     }
 
     return results
-
+    
 
 decontaminate_suffix = "_decontaminate"
 
@@ -228,9 +230,10 @@ def evaluate(
 
         # deterministically shuffle docs and chop off the first `limit` because sometimes docs are in some kind of order
         task_docs = list(task_doc_func())
+        #task_docs = task_docs[:1000] # yhgo test to reduce inference dataset
         rnd = random.Random()
         rnd.seed(42)
-        rnd.shuffle(task_docs)
+        rnd.shuffle(task_docs) # task_docs 셔플
         print(f"Task: {task_name}; number of docs: {len(task_docs)}")
 
         if write_out:
@@ -245,17 +248,31 @@ def evaluate(
             limit = int(len(task_docs) * limit) if limit < 1.0 else int(limit)
 
         for doc_id, doc in enumerate(itertools.islice(task_docs, 0, limit)):
+            #print("doc_id", doc_id) # 0~9
+            #print("doc", doc) # doc {'query': 'Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady', 'choices': ['swings│|                               |                      |                  N/A |
+                                #and lands in her arms.', 'pulls the barbell forward.', 'pulls a rope attached to the barbell.', 'stands and lifts the weig│+-------------------------------+----------------------+----------------------+
+                                #ht over her head.'], 'gold': 3}
+            #print("decontaminate", decontaminate) # false
             if decontaminate and task.should_decontaminate():
+                print("if decontaminate and task.should_decontaminate() = true")
                 docs_for_decontamination[(task_name, task_set)].append(
                     task.doc_to_decontamination_query(doc)
                 )
 
             docs[(task_name, doc_id)] = doc
-            ctx = task.fewshot_context(
+            #print("docs", docs)
+            ctx = task.fewshot_context( # 일단 0 shot이기 때문에 pass
                 doc=doc, num_fewshot=num_fewshot, rnd=rnd, description=description
             )
             reqs = task.construct_requests(doc, ctx)
-
+            #print("reqs", reqs)
+            '''
+            reqs [Req_loglikelihood('Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady', ' swings and lands in her arms.')[0]                                                                                                
+                , Req_loglikelihood('Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady', ' pulls the barbell forward.')[0]                                                                                                       
+                , Req_loglikelihood('Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady', ' pulls a rope attached to the barbell.')[0]                                                                                            
+                , Req_loglikelihood('Clean and jerk: A lady walks to a barbell. She bends down and grabs the pole. The lady', ' stands and lifts the weight over her head.')[0]                                                                                      
+                ]
+            '''
             if write_out:
                 prompt_details.append({"doc_id": doc_id})
 
@@ -270,10 +287,17 @@ def evaluate(
                 reqs = [reqs]
             for i, req in enumerate(reqs):
                 requests[req.request_type].append(req)
+                #print("requests", requests)
+                '''
+                requests defaultdict(<class 'list'>, 
+                {'loglikelihood': 
+                    [Req_loglikelihood('Sumo: A cartoon animation video is shown with people wandering around and rockets being shot. Two men', ' fight robots of evil and ends with a to be continued.')[0]       
+                    , Req_loglikelihood('Sumo: A cartoon animation video is shown with people wandering around and rockets being shot. Two men', ' are then shown in closeups shooting a shot put.')[0]
+                '''
                 # i: index in requests for a single task instance
                 # doc_id: unique id that we can get back to a doc using `docs`
                 requests_origin[req.request_type].append((i, task_name, doc, doc_id))
-
+                #print("requests_origin", requests_origin)
                 if write_out:
                     prompt_details[-1][f"prompt_{i}"] = "".join(
                         (map(lambda x: "".join(x), req.args))
@@ -294,6 +318,11 @@ def evaluate(
     # all responses for each (task, doc)
     process_res_queue = collections.defaultdict(list)
 
+    import os
+    local_rank = int(os.getenv('LOCAL_RANK', '0'))
+    world_size = int(os.getenv('WORLD_SIZE', '1'))
+
+
     # execute each type of request
     for reqtype, reqs in requests.items():
         # TODO: right now, this code runs multiple separate LM requests for multiple Requests differing
@@ -301,15 +330,42 @@ def evaluate(
         #       solution. we could also implement some kind of auto-grouping here;
         #       they should end up next to each other.
 
-        print("Running", reqtype, "requests")
+        print("Running", reqtype, "requests") # reqtype:loglikelyhood
         resps = getattr(lm, reqtype)([req.args for req in reqs])
+        #print("resps1", resps)
+        '''
+        resps1 [(-47.81697082519531, False), (-39.9013557434082, False), (-35.39762496948242, False), (-32.52865982055664, False), 
+                (-18.005756378173828, False), (-22.35967254638672, False), (-25.06475257873535, False), (-25.011560440063477, False), (-38.
+                354278564453125, False), (-52.953575134277344, False), (-14.28619384765625, False), (-110.03718566894531, False), (-122.516
+                17431640625, False), (-44.3336067199707, False), (-18.485198974609375, False), (-54.27171325683594, False), (-17.5708923339
+                84375, False), (-27.477922439575195, False), (-15.40565299987793, False), (-31.639970779418945, False), (-29.98431968688965
+                , False), (-15.214678764343262, False), (-21.020286560058594, False), (-31.177133560180664, False), (-55.922203063964844, F
+                alse), (-26.40359878540039, False), (-75.67005157470703, False), (-63.835792541503906, False), (-14.453436851501465, False)
+                , (-7.027482986450195, False), (-15.081632614135742, False), (-15.332090377807617, False), (-37.84993362426758, False), (-2
+                9.609577178955078, False), (-20.308046340942383, False), (-26.190340042114258, False), (-26.49192237854004, False), (-12.52
+                4648666381836, False), (-21.693166732788086, False), (-10.633190155029297, False)]
+        '''
         resps = [
             x if req.index is None else x[req.index] for x, req in zip(resps, reqs)
         ]
-
+        #print("resps2", resps)
+        #print("write_out", write_out)
         for resp, (i, task_name, doc, doc_id) in zip(resps, requests_origin[reqtype]):
             process_res_queue[(task_name, doc_id)].append((i, resp))
-
+            #print("process_res_queue", process_res_queue)
+            '''
+            process_res_queue defaultdict(<class 'list'>, {
+                ('hellaswag', 0): [(0, -47.81697082519531), (1, -39.9013557434082), (2, -35.39762496948242), (3, -32.52865982055664)], 
+                ('hellaswag', 1): [(0, -18.005756378173828), (1, -22.35967254638672), (2, -25.06475257873535), (3, -25.011560440063477)], 
+                ('hellaswag', 2): [(0, -38.354278564453125), (1, -52.953575134277344), (2, -14.28619384765625), (3, -110.03718566894531)], 
+                ('hellaswag', 3): [(0, -122.51617431640625), (1, -44.3336067199707), (2, -18.485198974609375), (3, -54.27171325683594)], 
+                ('hellaswag', 4): [(0, -17.570892333984375), (1, -27.477922439575195), (2, -15.40565299987793), (3, -31.639970779418945)], 
+                ('hellaswag', 5): [(0, -29.98431968688965), (1, -15.214678764343262), (2, -21.020286560058594), (3, -31.177133560180664)], 
+                ('hellaswag', 6): [(0, -55.922203063964844), (1, -26.40359878540039), (2, -75.67005157470703), (3, -63.835792541503906)], 
+                ('hellaswag', 7): [(0, -14.453436851501465), (1, -7.027482986450195), (2, -15.081632614135742), (3, -15.332090377807617)], 
+                ('hellaswag', 8): [(0, -37.84993362426758), (1, -29.609577178955078), (2, -20.308046340942383), (3, -26.190340042114258)], 
+                ('hellaswag', 9): [(0, -26.49192237854004), (1, -12.524648666381836), (2, -21.693166732788086), (3, -10.633190155029297)]})
+            '''
             if write_out:
                 write_out_info[task_name][doc_id][f"logit_{i}"] = resp
                 task = task_dict[task_name]

@@ -1,0 +1,68 @@
+[2023-09-19 03:29:55,436] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-19 03:29:57,235] [WARNING] [runner.py:203:fetch_hostfile] Unable to find hostfile, will proceed with training with local resources only.
+[2023-09-19 03:29:57,265] [INFO] [runner.py:570:main] cmd = /usr/bin/python -u -m deepspeed.launcher.launch --world_info=eyJsb2NhbGhvc3QiOiBbMCwgMSwgMiwgM119 --master_addr=127.0.0.1 --master_port=29500 --enable_each_rank_log=None main.py --model hf-causal-experimental --model_args pretrained=/home/work/llama-30b-hf,use_accelerate=False --batch_size 64 --tasks hellaswag --no_cache --device cuda
+[2023-09-19 03:29:59,101] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-19 03:30:00,696] [INFO] [launch.py:138:main] 0 NCCL_VERSION=2.8.2
+[2023-09-19 03:30:00,696] [INFO] [launch.py:145:main] WORLD INFO DICT: {'localhost': [0, 1, 2, 3]}
+[2023-09-19 03:30:00,697] [INFO] [launch.py:151:main] nnodes=1, num_local_procs=4, node_rank=0
+[2023-09-19 03:30:00,697] [INFO] [launch.py:162:main] global_rank_mapping=defaultdict(<class 'list'>, {'localhost': [0, 1, 2, 3]})
+[2023-09-19 03:30:00,697] [INFO] [launch.py:163:main] dist_world_size=4
+[2023-09-19 03:30:00,697] [INFO] [launch.py:165:main] Setting CUDA_VISIBLE_DEVICES=0,1,2,3
+[2023-09-19 03:30:03,864] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-19 03:30:03,873] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-19 03:30:03,890] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+[2023-09-19 03:30:03,895] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
+Selected Tasks: ['hellaswag']Selected Tasks: ['hellaswag']
+
+Selected Tasks: ['hellaswag']start timestampingstart timestamping
+
+
+start timestamping
+Selected Tasks: ['hellaswag']
+start timestamping
+pretrained load time:  265.63741 sec
+[2023-09-19 03:34:34,077] [INFO] [logging.py:96:log_dist] [Rank -1] DeepSpeed info: version=0.10.2, git-hash=unknown, git-branch=unknown
+[2023-09-19 03:34:34,079] [INFO] [logging.py:96:log_dist] [Rank -1] quantize_bits = 8 mlp_extra_grouping = False, quantize_groups = 1
+_create_model_parallel_group
+[2023-09-19 03:34:34,079] [INFO] [comm.py:637:init_distributed] cdb=None
+pretrained load time:  265.65156 sec
+[2023-09-19 03:34:34,086] [INFO] [logging.py:96:log_dist] [Rank -1] DeepSpeed info: version=0.10.2, git-hash=unknown, git-branch=unknown
+pretrained load time:  265.63437 sec
+[2023-09-19 03:34:34,087] [INFO] [logging.py:96:log_dist] [Rank -1] DeepSpeed info: version=0.10.2, git-hash=unknown, git-branch=unknown
+[2023-09-19 03:34:34,089] [INFO] [logging.py:96:log_dist] [Rank -1] quantize_bits = 8 mlp_extra_grouping = False, quantize_groups = 1
+_create_model_parallel_group
+[2023-09-19 03:34:34,089] [INFO] [comm.py:637:init_distributed] cdb=None
+[2023-09-19 03:34:34,089] [INFO] [logging.py:96:log_dist] [Rank -1] quantize_bits = 8 mlp_extra_grouping = False, quantize_groups = 1
+_create_model_parallel_group
+[2023-09-19 03:34:34,090] [INFO] [comm.py:637:init_distributed] cdb=None
+pretrained load time:  265.68365 sec
+[2023-09-19 03:34:34,128] [INFO] [logging.py:96:log_dist] [Rank -1] DeepSpeed info: version=0.10.2, git-hash=unknown, git-branch=unknown
+[2023-09-19 03:34:34,131] [INFO] [logging.py:96:log_dist] [Rank -1] quantize_bits = 8 mlp_extra_grouping = False, quantize_groups = 1
+_create_model_parallel_group
+[2023-09-19 03:34:34,131] [INFO] [comm.py:637:init_distributed] cdb=None
+[2023-09-19 03:34:34,131] [INFO] [comm.py:668:init_distributed] Initializing TorchBackend in DeepSpeed with backend nccl
+local_rank 2
+local_rank 0
+local_rank 1
+local_rank 3
+AutoTP:  [(<class 'transformers.models.llama.modeling_llama.LlamaDecoderLayer'>, ['self_attn.o_proj', 'mlp.down_proj'])]
+AutoTP:  [(<class 'transformers.models.llama.modeling_llama.LlamaDecoderLayer'>, ['self_attn.o_proj', 'mlp.down_proj'])]
+AutoTP:  [(<class 'transformers.models.llama.modeling_llama.LlamaDecoderLayer'>, ['self_attn.o_proj', 'mlp.down_proj'])]
+AutoTP:  [(<class 'transformers.models.llama.modeling_llama.LlamaDecoderLayer'>, ['mlp.down_proj', 'self_attn.o_proj'])]
+deepspeed load time:  25.09443 secdeepspeed load time:  25.05358 sec
+
+deepspeed load time:  25.10592 secdeepspeed load time:  25.09631 sec
+
+ 291.32228 sec
+null
+ 291.32548 sec
+null
+ 291.36584 sec
+null
+ 291.37345 sec
+null
+[2023-09-19 03:35:02,058] [INFO] [launch.py:315:sigkill_handler] Killing subprocess 2639641
+[2023-09-19 03:35:02,069] [INFO] [launch.py:315:sigkill_handler] Killing subprocess 2639642
+[2023-09-19 03:35:02,073] [INFO] [launch.py:315:sigkill_handler] Killing subprocess 2639643
+[2023-09-19 03:35:02,074] [INFO] [launch.py:315:sigkill_handler] Killing subprocess 2639644
+[2023-09-19 03:35:02,121] [ERROR] [launch.py:321:sigkill_handler] ['/usr/bin/python', '-u', 'main.py', '--local_rank=3', '--model', 'hf-causal-experimental', '--model_args', 'pretrained=/home/work/llama-30b-hf,use_accelerate=False', '--batch_size', '64', '--tasks', 'hellaswag', '--no_cache', '--device', 'cuda'] exits with return code = 1

@@ -112,7 +112,7 @@ class LM(abc.ABC):
         additional_config = {} if additional_config is None else additional_config
         args = utils.simple_parse_args_string(arg_string)
         args2 = {k: v for k, v in additional_config.items() if v is not None}
-        return cls(**args, **args2)
+        return cls(**args, **args2) # HuggingFaceAutoLM call
 
     def set_cache_hook(self, cache_hook):
         self.cache_hook = cache_hook
@@ -203,17 +203,21 @@ class BaseLM(LM):
         if n_spaces > 0:
             continuation = context[-n_spaces:] + continuation
             context = context[:-n_spaces]
-        whole_enc = self.tok_encode(context + continuation)
+        whole_enc = self.tok_encode(context + continuation) # 합친 문장을 token화 하는 것 같은데데
         context_enc = self.tok_encode(context)
         context_enc_len = len(context_enc)
         continuation_enc = whole_enc[context_enc_len:]
         return context_enc, continuation_enc
 
     def loglikelihood(self, requests):
+        print("def loglikelihood")
         new_reqs = []
+        #print("requests", requests)
         for context, continuation in requests:
             if context == "":
                 # end of text as context
+                #print("self.eot_token_id", self.eot_token_id) # 실행 X
+                #print("self.tok_encode(continuation)", self.tok_encode(continuation))
                 context_enc, continuation_enc = [self.eot_token_id], self.tok_encode(
                     continuation
                 )
@@ -225,6 +229,7 @@ class BaseLM(LM):
         return self._loglikelihood_tokens(new_reqs)
 
     def loglikelihood_rolling(self, requests):
+        print("def loglikelihood_rolling")
         # TODO: Implement caching once we've confirmed the perplexity implementation
 
         # automatic batch size detection for vectorization
@@ -269,6 +274,7 @@ class BaseLM(LM):
         return loglikelihoods
 
     def _loglikelihood_tokens(self, requests, disable_tqdm=False, override_bs=None):
+        print("def _loglikelihood_tokens")
         # TODO: implement some kind of efficient-request-middleware that lumps together requests with the same context
         res = []
 
@@ -291,6 +297,7 @@ class BaseLM(LM):
         # automatic (variable) batch size detection for vectorization
         # pull longest context sample from request
         def _batch_scheduler(pos):
+            print("def _batch_scheduler")
             sched = pos // int(n_reordered_requests / self.batch_schedule)
             if sched in self.batch_sizes:
                 return self.batch_sizes[sched]
@@ -340,6 +347,7 @@ class BaseLM(LM):
                     (context_enc + continuation_enc)[-(self.max_length + 1) :][:-1],
                     dtype=torch.long,
                 ).to(self.device)
+                #print("inp", inp)
                 (inplen,) = inp.shape
 
                 cont = continuation_enc
@@ -365,10 +373,13 @@ class BaseLM(LM):
                 inplens.append(inplen)
 
             batched_inps = torch.cat(inps, dim=0)  # [batch, padding_length]
+            #print("batched_inps", batched_inps)
+            #print("batched_inps.shape()", batched_inps.shape) # batched_inps.shape() torch.Size([1, 17])
             multi_logits = F.log_softmax(
                 self._model_call(batched_inps), dim=-1
             ).cpu()  # [batch, padding_length, vocab]
-
+            #print("multi_logits", multi_logits)
+            #print("multi_logits.shape()", multi_logits.shape) # multi_logits.shape() torch.Size([1, 17, 32000])
             for (cache_key, _, _), logits, inp, inplen, cont_toks in zip(
                 chunk, multi_logits, inps, inplens, cont_toks_list
             ):
@@ -757,6 +768,12 @@ class MultipleChoiceTask(Task):
         acc = 1.0 if np.argmax(results) == gold else 0.0
         completion_len = np.array([float(len(i)) for i in doc["choices"]])
         acc_norm = 1.0 if np.argmax(results / completion_len) == gold else 0.0
+        #print("gold:", gold)
+        #print("results:", results)
+        #print("doc[choices]", doc["choices"])
+        #print("completion_len", completion_len)
+        #print("acc", acc)
+        #print("acc_norm", acc_norm)
 
         return {
             "acc": acc,
