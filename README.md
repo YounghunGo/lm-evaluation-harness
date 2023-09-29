@@ -1,8 +1,9 @@
 # Language Model Evaluation Harness
 This repository contains LLaMA-30B inference code for applying the following system-view techniques in the original lm-evaluation harness:               
-(1) model parallelism, (2) tensor parallelism, and (3) inference-optimized kernel technique with tensor parallelism.
 
-The original lm-evaluation harness supports (1) model parallelism, and deepspeed supports (2) tensor parallelism, and (3) inference-optimized kernel technique.
+We apply 1) model parallelism, 2) tensor parallelism, and 3) inference-optimized kernel technique with tensor parallelism.
+
+The original lm-evaluation harness supports 1) model parallelism, and deepspeed supports 2) tensor parallelism, and 3) inference-optimized kernel technique.
 
 ## Testing  
 Let us assume that the [weights of LLaMA-30B](https://huggingface.co/decapoda-research/llama-30b-hf) are loaded locally in advance. Also, it is assumed that all settings such as deepspeed have been completed. For deepspeed settings, see [here](https://github.com/microsoft/DeepSpeed).
