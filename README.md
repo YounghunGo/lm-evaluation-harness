@@ -1,4 +1,26 @@
 # Language Model Evaluation Harness
+This repository contains LLaMA-30B inference code for applying the following system-view techniques in the original lm-evaluation harness:               
+(1) model parallelism, (2) tensor parallelism, and (3) inference-optimized kernel technique with tensor parallelism.
+
+The original lm-evaluation harness supports (1) model parallelism, and deepspeed supports (2) tensor parallelism, and (3) inference-optimized kernel technique.
+
+## Testing  
+Let us assume that the [weights of LLaMA-30B](https://huggingface.co/decapoda-research/llama-30b-hf) are loaded locally in advance. Also, it is assumed that all settings such as deepspeed have been completed. For deepspeed settings, see [here](https://github.com/microsoft/DeepSpeed).
+
+To test LLaMA-30B with model parallelism, execute the following command.
+<pre><code>
+python main.py --model hf-causal-experimental --model_args pretrained=[path of weights in local],use_accelerate=True --batch_size [your batch size] --tasks [task name e.g., hellaswag] --no_cache --device
+</pre></code>
+
+To test LLama-30B with tensor parallelism, execute the following command.
+<pre><code>
+deepspeed --num_gpus 4 main.py --model hf-causal-experimental --model_args pretrained=[path of weights in local],use_accelerate=False --batch_size [your batch size] --tasks [task name e.g., hellaswag] --no_cache --device cuda  
+</pre></code>
+
+To test the inference-optimized technique with tensor parallelism, execute the following command with the flag "--iok".
+<pre><code>
+deepspeed --num_gpus 4 main.py --model hf-causal-experimental --model_args pretrained=[path of weights in local],use_accelerate=False --batch_size [your batch size] --tasks [task name e.g., hellaswag] --no_cache --device cuda --iok
+</pre></code>
 
 ## We're Refactoring LM-Eval!
 (as of 6/15/23)
