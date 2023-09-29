@@ -1,6 +1,0 @@
-[2023-09-19 04:06:03,051] [INFO] [real_accelerator.py:158:get_accelerator] Setting ds_accelerator to cuda (auto detect)
-Selected Tasks: ['hellaswag']
-start timestamping
-pretrained load time:  90.27736 sec
- 90.76055 sec
-null
