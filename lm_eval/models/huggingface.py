@@ -102,6 +102,8 @@ class HuggingFaceAutoLM(BaseLM):
         bnb_4bit_quant_type: Optional[str] = None,
         bnb_4bit_compute_dtype: Optional[Union[str, torch.dtype]] = None,
         bnb_4bit_use_double_quant: Optional[bool] = False,
+        parallel: Optional[str] = None,
+        iok: Optional[bool] = False
     ):
         """Initializes a HuggingFace `AutoModel` and `AutoTokenizer` for evaluation.
         Args:
@@ -246,6 +248,8 @@ class HuggingFaceAutoLM(BaseLM):
             bnb_4bit_quant_type=bnb_4bit_quant_type,
             bnb_4bit_compute_dtype=bnb_4bit_compute_dtype,
             bnb_4bit_use_double_quant=bnb_4bit_use_double_quant,
+            parallel=parallel,
+            iok=iok,
             **model_kwargs,
         )
         # note: peft_path can be different than pretrained model path
@@ -292,6 +296,8 @@ class HuggingFaceAutoLM(BaseLM):
         bnb_4bit_quant_type: Optional[str] = None,
         bnb_4bit_compute_dtype: Optional[Union[str, torch.dtype]] = None,
         bnb_4bit_use_double_quant: Optional[bool] = False,
+        parallel: Optional[str] = None,
+        iok: Optional[bool] = False
     ) -> transformers.AutoModel:
         local_rank = int(os.getenv('LOCAL_RANK', '0'))
         world_size = int(os.getenv('WORLD_SIZE', '1'))
@@ -310,7 +316,6 @@ class HuggingFaceAutoLM(BaseLM):
                     if bnb_4bit_use_double_quant:
                         model_kwargs["bnb_4bit_use_double_quant"] = bnb_4bit_use_double_quant
             import time
-
             start = time.time()
             model = self.AUTO_MODEL_CLASS.from_pretrained( # 여기서 Loading checkpoint shards 걸리는 듯
                 pretrained,
@@ -346,33 +351,31 @@ class HuggingFaceAutoLM(BaseLM):
                 warmup_triton=gptq_use_triton,
                 inject_fused_attention=inject_fused_attention,
 	        )
-        # from parallelformers import parallelize
 
-        # parallelize(model, num_gpus=4, fp16=True, verbose='detail')
-        #from llm_serving.model.wrapper import get_model
+        if parallel == "mp":
+            model = deepspeed.init_inference(model,
+                dtype=torch.float16,
+                mp_size=world_size,
+                replace_with_kernel_inject=True)    
+        elif parallel == "tp":
+            tp_config = deepspeed.inference.config.DeepSpeedTPConfig()
+            tp_config.tp_size = world_size
 
-        #model = get_model(model_name="llama-30b-hf", path="~/llama-30b-hf/")
+            model = deepspeed.init_inference(model,
+                tensor_parallel=tp_config,
+                dtype=torch.float16,
+                replace_with_kernel_inject=False,
+                )    
+        elif paralell == "tp" and iok:
+            tp_config = deepspeed.inference.config.DeepSpeedTPConfig()
+            tp_config.tp_size = world_size
 
-    #deepspeed - inseo
-        #print("model.device_map", model.device_map)
-
-        tp_config = deepspeed.inference.config.DeepSpeedTPConfig()
-        tp_config.tp_size = world_size
-
-        start = time.time()
-        model = deepspeed.init_inference(model,
-            tensor_parallel=tp_config,
-            dtype=torch.float16,
-            #mp_size=world_size,
-            #replace_with_kernel_inject=True)
-            replace_with_kernel_inject=False,
-            use_triton=True,
-            triton_autotune=True)
+            model = deepspeed.init_inference(model,
+                tensor_parallel=tp_config,
+                dtype=torch.float16,
+                replace_with_kernel_inject=True
+                )
         
-        end = time.time()
-        print(f"deepspeed load time: {end - start: .5f} sec")
-        print(model)
-
         return model
 
     def _create_auto_model_peft(
